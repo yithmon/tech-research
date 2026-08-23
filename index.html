@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>雁鹏的技术研究</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #f8f9fa;
+    color: #1a1a1a;
+    line-height: 1.6;
+    padding: 40px 20px;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  header {
+    margin-bottom: 40px;
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    color: #666;
+    font-size: 15px;
+  }
+  .works-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .work-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  .work-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  }
+  .work-card h2 {
+    font-size: 18px;
+    margin-bottom: 8px;
+    color: #1a1a1a;
+  }
+  .work-card p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 12px;
+  }
+  .work-card .meta {
+    font-size: 12px;
+    color: #999;
+  }
+  .tag {
+    display: inline-block;
+    background: #e8f4f8;
+    color: #0066cc;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-right: 6px;
+  }
+  footer {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    color: #999;
+    font-size: 13px;
+    text-align: center;
+  }
+  footer a {
+    color: #666;
+    text-decoration: none;
+  }
+  footer a:hover {
+    color: #0066cc;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>雁鹏的技术研究</h1>
+    <p class="subtitle">科技创业公司追踪 · 投资图谱 · 数据分析工具</p>
+  </header>
+
+  <div class="works-grid">
+    <a href="works/investment-graph/" class="work-card">
+      <h2>投资图谱：大模型与具身机器人赛道</h2>
+      <p>31 家科创公司 × 381 家投资方的二分网络图谱，含融资轮次、估值、创始人背景与集中度分析。</p>
+      <div class="meta">
+        <span class="tag">数据可视化</span>
+        <span class="tag">D3.js</span>
+        2026-08-21
+      </div>
+    </a>
+
+    <!-- 未来作品示例 -->
+    <!--
+    <a href="works/bsc-workbench/" class="work-card">
+      <h2>BSC 工作台</h2>
+      <p>平衡计分卡管理工具，支持目标设定、指标跟踪与绩效评估。</p>
+      <div class="meta">
+        <span class="tag">工具</span>
+        即将上线
+      </div>
+    </a>
+    -->
+  </div>
+
+  <footer>
+    <p>由 <a href="https://github.com/yithmon">雁鹏</a> 构建 · <a href="https://github.com/yithmon/tech-blog-subscription">GitHub 仓库</a></p>
+  </footer>
+</div>
+</body>
+</html>
