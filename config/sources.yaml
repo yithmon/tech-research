@@ -217,10 +217,44 @@ sources:
       priority: 6
       focus: "Ultra-deep AI interviews, capital narrative, power structures"
 
+# Early Radar（早期预警源）：不计入深读配额，只用于每周扫描「新面孔 / 弱信号」
+# 由周五定时任务扫描。触发规则：同一项目/工具/人被 ≥2 个独立信源提及（两源触发）
+# → 升级为「本月值得动手试」候选，记入当期周刊「跨源信号」节。
+radar:
+  - id: hacker-news
+    name: "Hacker News"
+    role: early-radar
+    url: https://news.ycombinator.com/
+    scan_focus: "Show HN 新项目、首页反复出现的 AI 工具/demo、高热度讨论串"
+
+  - id: product-hunt
+    name: "Product Hunt (AI)"
+    role: early-radar
+    url: https://www.producthunt.com/topics/artificial-intelligence
+    scan_focus: "本周新上线 AI 产品、独立开发者作品、得票与定位"
+
+  - id: github-trending
+    name: "GitHub Trending"
+    role: early-radar
+    url: https://github.com/trending
+    scan_focus: "本周热门 AI 开源项目（weekly 视图）、agent/evals/coding 工具新面孔"
+
+  - id: huggingface-trending
+    name: "HuggingFace Trending"
+    role: early-radar
+    url: https://huggingface.co/models?sort=trending
+    scan_focus: "热门模型与 Spaces、社区 demo 侧的有趣应用"
+
+  - id: jike-ai
+    name: "即刻 AI 圈"
+    role: early-radar
+    url: https://web.okjike.com/
+    scan_focus: "中文 AI 构建者社区热议、国产独立开发者新作品"
+
 # Automation settings
 automation:
   digest_day: friday
-  digest_time: "16:00"
+  digest_time: "14:00"
   timezone: "Asia/Shanghai"
   output_dir: "digests/"
   format: markdown

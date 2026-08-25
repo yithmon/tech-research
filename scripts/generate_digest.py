@@ -259,6 +259,11 @@ def collect_sources(cfg: dict) -> list[dict]:
     return out
 
 
+def collect_radar(cfg: dict) -> list[dict]:
+    """读取顶层 radar 分组（早期预警源），不计入深读配额。"""
+    return [dict(s) for s in (cfg.get("radar") or [])]
+
+
 def sort_key(s: dict):
     prio = s.get("priority")
     try:
@@ -271,7 +276,7 @@ def sort_key(s: dict):
 # ---------------------------------------------------------------------------
 # 渲染
 # ---------------------------------------------------------------------------
-def render_digest(year: int, week: int, sources: list[dict], generated: dt.date) -> str:
+def render_digest(year: int, week: int, sources: list[dict], radar: list[dict], generated: dt.date) -> str:
     win_start, win_end = digest_window(year, week)
     start_str = win_start.strftime("%Y-%m-%d")
     end_str = win_end.strftime("%Y-%m-%d")
@@ -310,8 +315,26 @@ def render_digest(year: int, week: int, sources: list[dict], generated: dt.date)
         )
     L.append("")
 
-    # 2. 三命题落点
-    L.append("## 2. 三命题坐标 · 本周落点")
+    # 2. 早期雷达扫描
+    L.append("## 2. 早期雷达扫描（待填）")
+    L.append("")
+    L.append("> 扫描以下预警源，找「新面孔 / 弱信号」。")
+    L.append("> 两源触发规则：同一项目/工具/人被 ≥2 个独立信源提及 → 列入第 5 节「本月值得动手试」候选。")
+    L.append("")
+    L.append("| 雷达源 | 扫描重点 | 本周新发现（名称 / 链接 / 被提及次数） |")
+    L.append("|--------|----------|----------------------------------------|")
+    for r in radar:
+        url = r.get("url") or ""
+        name = r.get("name", "-")
+        name_cell = f"[{name}]({url})" if url.startswith("http") else name
+        L.append(f"| {name_cell} | {r.get('scan_focus', '-')} | （待填） |")
+    L.append("")
+    L.append("- 雷达 × 订阅源交集（新面孔是否已被订阅源覆盖，或值得新增订阅）：（待填）")
+    L.append("- 命中两源触发的候选（升级至第 5 节）：（待填）")
+    L.append("")
+
+    # 3. 三命题落点
+    L.append("## 3. 三命题坐标 · 本周落点")
     L.append("")
     L.append("> 每周读完，回到这三轴各记一句：本周哪根轴的证据在增厚？哪根还空着？")
     L.append("")
@@ -320,8 +343,8 @@ def render_digest(year: int, week: int, sources: list[dict], generated: dt.date)
         L.append(f"  - 本周证据 / 反例：（待填）")
     L.append("")
 
-    # 3. 逐源笔记位
-    L.append("## 3. 本周笔记（待填）")
+    # 4. 逐源笔记位
+    L.append("## 4. 本周笔记（待填）")
     L.append("")
     L.append("> 每读完一篇，定位三轴 + 记批注。模板：")
     L.append("> - 三轴定位：命题X（补了「测量对象形状」/「人类站位」/「边界移动」）")
@@ -339,17 +362,18 @@ def render_digest(year: int, week: int, sources: list[dict], generated: dt.date)
         L.append("- 我的批注：（待填）")
         L.append("")
 
-    # 4. 跨源信号
-    L.append("## 4. 跨源信号（待填）")
+    # 5. 跨源信号
+    L.append("## 5. 跨源信号（待填）")
     L.append("")
     L.append("- 本周多个来源共同指向的主题：（待填）")
+    L.append("- 本月值得动手试（雷达两源触发命中，附链接）：（待填）")
     L.append("- 与上月/上季复盘的对照：（待填）")
     L.append("")
 
-    # 5. 自动化说明
-    L.append("## 5. 关于本文件")
+    # 6. 自动化说明
+    L.append("## 6. 关于本文件")
     L.append("")
-    L.append("- 由 `scripts/generate_digest.py` 自动生成脚手架，每周五 16:00 (Asia/Shanghai) 由 CI 触发。")
+    L.append("- 由 `scripts/generate_digest.py` 自动生成脚手架；每周五 14:00 (Asia/Shanghai) 由 QoderWork 定时任务「Tech Blog Weekly」扫描生成并推送。")
     L.append("- 真实内容（批注、跨源信号）由 owner 每周读完手填。")
     L.append("- 若某周无新内容，保留脚手架即可，下一周继续累积。")
     L.append("")
@@ -377,6 +401,7 @@ def main() -> int:
 
     cfg = load_yaml(cfg_path)
     sources = collect_sources(cfg)
+    radar = collect_radar(cfg)
 
     if args.week:
         year, week = parse_week_arg(args.week)
@@ -384,7 +409,7 @@ def main() -> int:
         year, week = latest_completed_week()
 
     generated = dt.date.today()
-    content = render_digest(year, week, sources, generated)
+    content = render_digest(year, week, sources, radar, generated)
 
     digest_dir = os.path.join(root, "digests")
     os.makedirs(digest_dir, exist_ok=True)

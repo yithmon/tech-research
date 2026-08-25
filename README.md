@@ -35,10 +35,8 @@ Personal curated tech blog/newsletter subscription tracker. Focused on AI cognit
 │   └── 2026-W29.md       # First issue (scaffold + H1-review seed)
 ├── config/
 │   └── sources.yaml       # Machine-readable subscription config (drives automation)
-├── scripts/
-│   └── generate_digest.py # Weekly digest generator (zero-dep, reads sources.yaml)
-└── .github/workflows/
-    └── weekly-digest.yml  # Scheduled: every Fri 16:00 Asia/Shanghai
+└── scripts/
+    └── generate_digest.py # Weekly digest generator (zero-dep, reads sources.yaml + radar)
 ```
 
 ## Subscription List
@@ -98,6 +96,19 @@ Personal curated tech blog/newsletter subscription tracker. Focused on AI cognit
 | 4 | 郭宇 | X + Mirror | X: @turingou | Ex-ByteDance, tech aesthetics, AI-era choices | Knowledge work future, individual choices |
 | 5 | 张小珺 | WeChat + Podcast | 小宇宙: 张小珺Jùn｜商业访谈录 | Ultra-deep interviews, AI capital narrative | Power structures behind tech, 3h+ deep dives |
 
+### Early Radar（早期预警源，不计深读配额）
+
+> 不占深读时间，由每周五定时任务扫描：现在大家在反复谈论什么工具 / 项目 / 人。
+> **两源触发规则**：同一项目/工具/人被 ≥2 个独立信源在同一周提及 → 升级为「本月值得动手试」候选，记入当期周刊跨源信号节。
+
+| # | Radar Source | Link | Scan Focus |
+|---|--------------|------|------------|
+| 1 | Hacker News | [news.ycombinator.com](https://news.ycombinator.com/) | Show HN 新项目、首页反复出现的 AI 工具/demo |
+| 2 | Product Hunt (AI) | [producthunt.com](https://www.producthunt.com/topics/artificial-intelligence) | 本周新上线 AI 产品、独立开发者作品 |
+| 3 | GitHub Trending | [github.com/trending](https://github.com/trending) | 本周热门 AI 开源项目（weekly 视图） |
+| 4 | HuggingFace Trending | [huggingface.co](https://huggingface.co/models?sort=trending) | 热门模型与 Spaces、社区 demo |
+| 5 | 即刻 AI 圈 | [web.okjike.com](https://web.okjike.com/) | 中文 AI 构建者社区热议、国产独立开发新作品 |
+
 ## Weekly Reading Priority
 
 1. **Simon Willison** - experiments + AI thinking (most aligned with evaluation work)
@@ -115,10 +126,11 @@ Personal curated tech blog/newsletter subscription tracker. Focused on AI cognit
 
 周刊是**脚手架 + 手填批注**的混合体：脚本负责把「本周该读谁、在三轴上该看什么位」自动排好，真实批注由 owner 每周读完手填（对应 frameworks 里的「我的批注」占位）。
 
-**自动生成（CI）**
-- `.github/workflows/weekly-digest.yml` 每周五 16:00 (Asia/Shanghai) 触发，运行 `scripts/generate_digest.py`，把新周刊提交到 `digests/YYYY-Www.md`。
-- 频率规则：`daily` / `weekly` 源每周纳入；`monthly` 源约每 4 周纳入一次（ISO 周号 % 4 == 1）。
-- 来源清单、优先级、频率全部来自 `config/sources.yaml`，改配置即改周刊，无需动脚本。
+**自动生成（QoderWork 定时任务）**
+- QoderWork 定时任务「Tech Blog Weekly」每周五 14:00 (Asia/Shanghai) 触发：扫描 21 个订阅源 + 5 个早期雷达源（HN / Product Hunt / 即刻 / GitHub Trending / HuggingFace），生成当期周刊并推送 `digests/YYYY-Www.md`，完成后经小Q通知 owner。
+- 雷达命中「两源触发」的项目/工具/人，会列入当期「跨源信号 · 本月值得动手试」候选。
+- 频率规则：`daily` / `weekly` / `biweekly` 源每周纳入；`monthly` 源约每 4 周纳入一次（ISO 周号 % 4 == 1）。
+- 来源清单、优先级、频率、雷达源全部来自 `config/sources.yaml`（含 `radar` 组），改配置即改周刊，无需动脚本。
 
 **本地手动生成**
 ```bash
@@ -130,7 +142,8 @@ python scripts/generate_digest.py --dry-run       # 只预览不写文件
 
 **每期结构**
 1. 本周阅读清单（按优先级 + 频率筛选，含预计时长）
-2. 三命题坐标 · 本周落点（待填）
-3. 逐源笔记位（三轴定位 / 补了哪块 / 我的批注）
-4. 跨源信号（待填）
-5. 关于本文件（自动化说明）
+2. 早期雷达扫描（新面孔 / 弱信号，含两源触发候选，待填）
+3. 三命题坐标 · 本周落点（待填）
+4. 逐源笔记位（三轴定位 / 补了哪块 / 我的批注）
+5. 跨源信号（含「本月值得动手试」候选，待填）
+6. 关于本文件（自动化说明）
