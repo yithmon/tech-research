@@ -103,11 +103,11 @@ Personal curated tech blog/newsletter subscription tracker. Focused on AI cognit
 
 | # | Radar Source | Link | Scan Focus |
 |---|--------------|------|------------|
-| 1 | Hacker News | [news.ycombinator.com](https://news.ycombinator.com/) | Show HN 新项目、首页反复出现的 AI 工具/demo |
-| 2 | Product Hunt (AI) | [producthunt.com](https://www.producthunt.com/topics/artificial-intelligence) | 本周新上线 AI 产品、独立开发者作品 |
-| 3 | GitHub Trending | [github.com/trending](https://github.com/trending) | 本周热门 AI 开源项目（weekly 视图） |
-| 4 | HuggingFace Trending | [huggingface.co](https://huggingface.co/models?sort=trending) | 热门模型与 Spaces、社区 demo |
-| 5 | 即刻 AI 圈 | [web.okjike.com](https://web.okjike.com/) | 中文 AI 构建者社区热议、国产独立开发新作品 |
+| 1 | Hacker News | [news.ycombinator.com](https://news.ycombinator.com/) | Show HN 新项目、首页反复出现的 AI 工具/demo（取 top 3） |
+| 2 | GitHub Trending | [github.com/trending](https://github.com/trending?since=weekly) | 本周热门 AI 开源项目（weekly 视图，取涨星 top 3-5） |
+| 3 | 即刻 AI 圈 | [web.okjike.com](https://web.okjike.com/) | 中文 AI 构建者社区热议、国产独立开发新作品（取 top 3） |
+
+> **2026-10-10 成本优化**：雷达由 5 源精简为 3 源——移除 Product Hunt（连续 3 周全链路 403 零产出）与 HuggingFace Trending（大厂模型已被 Simon/swyx 覆盖，边际价值低；需要时用 HF API 单发补查）。雷达扫描改由主 Agent 内联执行（走紧凑 API，不再派子 Agent），每源最多 2 次抓取尝试。
 
 ## Weekly Reading Priority
 
@@ -127,10 +127,12 @@ Personal curated tech blog/newsletter subscription tracker. Focused on AI cognit
 周刊是**脚手架 + 手填批注**的混合体：脚本负责把「本周该读谁、在三轴上该看什么位」自动排好，真实批注由 owner 每周读完手填（对应 frameworks 里的「我的批注」占位）。
 
 **自动生成（QoderWork 定时任务）**
-- QoderWork 定时任务「Tech Blog Weekly」每周五 14:00 (Asia/Shanghai) 触发：扫描 21 个订阅源 + 5 个早期雷达源（HN / Product Hunt / 即刻 / GitHub Trending / HuggingFace），生成当期周刊并推送 `digests/YYYY-Www.md`，完成后经小Q通知 owner。
+- QoderWork 定时任务「Tech Blog Weekly」每周五 14:00 (Asia/Shanghai) 触发：扫描活跃订阅源 + 3 个早期雷达源（HN / GitHub Trending / 即刻），生成当期周刊并推送 `digests/YYYY-Www.md`，完成后经小Q通知 owner。
 - 雷达命中「两源触发」的项目/工具/人，会列入当期「跨源信号 · 本月值得动手试」候选。
 - 频率规则：`daily` / `weekly` / `biweekly` 源每周纳入；`monthly` 源约每 4 周纳入一次（ISO 周号 % 4 == 1）。
-- 来源清单、优先级、频率、雷达源全部来自 `config/sources.yaml`（含 `radar` 组），改配置即改周刊，无需动脚本。
+- **停更源降月核查（2026-10-10 成本优化）**：长期停更的源在 `config/sources.yaml` 标注 `status: dormant` + `check: monthly`，只在每月核查周实际抓取，其余周直接沿用 `last_post` / `last_checked` 结转，不再逐周重复抓取。当前 7 个停更源：Zara Zhang、Dan Shipper、Andrej Karpathy、Eugene Yan、Jason Liu、Sachin Rekhi、Marc Lou。
+- **抓取成本控制**：活跃源分派最多 2 个子 Agent（轻量模型 qfmodel）并行抓取，每源最多 2 次尝试，优先紧凑 API（HN Algolia / GitHub trending / HF API）而非整页 HTML；雷达由主 Agent 内联扫描，不派子 Agent。
+- 来源清单、优先级、频率、雷达源、停更标记全部来自 `config/sources.yaml`（含 `radar` 组），改配置即改周刊，无需动脚本。
 
 **本地手动生成**
 ```bash

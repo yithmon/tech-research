@@ -13,6 +13,10 @@ sources:
       frequency: weekly
       priority: 2
       focus: "AI humanities, narrative structure, build-for-one"
+      status: dormant            # 长期停更，降为每月核查（2026-10-10 成本优化）
+      check: monthly
+      last_post: "2026-06-28"
+      last_checked: "2026-W41"
 
     # [已移除 2026-07-24] eugene-wei — Substack 停更自 2021，末篇长文 2023-07，仅 X 短推文活跃
 
@@ -25,6 +29,10 @@ sources:
       frequency: weekly
       priority: 4
       focus: "AI solo builder, agent deployment, workflow design"
+      status: dormant            # 静默 13+ 周，降为每月核查（2026-10-10 成本优化）
+      check: monthly
+      last_post: "2026-07-10"
+      last_checked: "2026-W41"
 
     - id: simon-willison
       name: "Simon Willison"
@@ -58,6 +66,10 @@ sources:
       frequency: monthly
       priority: 3
       focus: "Software 3.0, AGI philosophy, jagged intelligence"
+      status: dormant            # Substack 空壳、博客末篇 2/12，降为每月核查（2026-10-10 成本优化）
+      check: monthly
+      last_post: "2026-02-12"
+      last_checked: "2026-W41"
 
     # ─── AI Engineering Practice ───
     - id: addy-osmani
@@ -79,6 +91,10 @@ sources:
       frequency: biweekly
       priority: 2
       focus: "LLM production architecture, evals, reusable patterns"
+      status: dormant            # 末篇 6/21、已加入 Anthropic，降为每月核查（2026-10-10 成本优化）
+      check: monthly
+      last_post: "2026-06-21"
+      last_checked: "2026-W41"
 
     - id: jason-liu
       name: "Jason Liu"
@@ -89,6 +105,10 @@ sources:
       frequency: monthly
       priority: 3
       focus: "Agent architecture, structured outputs, contrarian practice"
+      status: dormant            # 末篇 7/5、全年仅 8 篇，降为每月核查（2026-10-10 成本优化）
+      check: monthly
+      last_post: "2026-07-05"
+      last_checked: "2026-W41"
 
     - id: hamel-husain
       name: "Hamel Husain"
@@ -128,6 +148,10 @@ sources:
       frequency: biweekly
       priority: 5
       focus: "AI-era PM craft, prototyping, operational frameworks"
+      status: dormant            # 末篇 8/23、48 天未更，降为每月核查（2026-10-10 成本优化）
+      check: monthly
+      last_post: "2026-08-23"
+      last_checked: "2026-W41"
 
     # ─── AI + Cognitive Science ───
     - id: dan-williams
@@ -159,6 +183,10 @@ sources:
       frequency: biweekly
       priority: 5
       focus: "Solo AI micro-SaaS, ship-fast, revenue-transparent building"
+      status: dormant            # newsletter 全站 403、迁出 Beehiiv，降为每月核查（2026-10-10 成本优化）
+      check: monthly
+      last_post: "2026-09-07"
+      last_checked: "2026-W41"
 
     - id: thorsten-ball
       name: "Thorsten Ball"
@@ -220,36 +248,36 @@ sources:
 # Early Radar（早期预警源）：不计入深读配额，只用于每周扫描「新面孔 / 弱信号」
 # 由周五定时任务扫描。触发规则：同一项目/工具/人被 ≥2 个独立信源提及（两源触发）
 # → 升级为「本月值得动手试」候选，记入当期周刊「跨源信号」节。
+#
+# [2026-10-10 成本优化] 雷达由 5 源裁为 3 源，改为主体直连紧凑 API、不再单开子 Agent：
+#   - 删 Product Hunt：连续 3 周（W39→W41）全链路 403，官网+镜像+搜索反复重试零产出，纯烧 credit。
+#   - 删 HuggingFace Trending：多为大厂模型发布，已被订阅源 Simon/swyx 覆盖，「新面孔」边际价值低；
+#     如某周需要模型侧信号，可用 api_hint 单发一次 JSON 请求补查，不常驻。
+#   保留的 3 源贡献了 W41 全部两源触发命中（GitHub=agent skills 集群、HN=CodeMender、即刻=Grok bot）。
 radar:
   - id: hacker-news
     name: "Hacker News"
     role: early-radar
     url: https://news.ycombinator.com/
-    scan_focus: "Show HN 新项目、首页反复出现的 AI 工具/demo、高热度讨论串"
-
-  - id: product-hunt
-    name: "Product Hunt (AI)"
-    role: early-radar
-    url: https://www.producthunt.com/topics/artificial-intelligence
-    scan_focus: "本周新上线 AI 产品、独立开发者作品、得票与定位"
+    api_hint: "https://hn.algolia.com/api/v1/search?tags=front_page （紧凑 JSON，直接给 points/comments，勿抓 HTML 首页）"
+    scan_focus: "Show HN 新项目、首页反复出现的 AI 工具/demo、高热度讨论串（取 top 3 即可）"
 
   - id: github-trending
     name: "GitHub Trending"
     role: early-radar
-    url: https://github.com/trending
+    url: https://github.com/trending?since=weekly
+    api_hint: "https://github.com/trending?since=weekly （weekly 视图，取涨星 top 3-5 的 AI/agent/coding 仓库）"
     scan_focus: "本周热门 AI 开源项目（weekly 视图）、agent/evals/coding 工具新面孔"
-
-  - id: huggingface-trending
-    name: "HuggingFace Trending"
-    role: early-radar
-    url: https://huggingface.co/models?sort=trending
-    scan_focus: "热门模型与 Spaces、社区 demo 侧的有趣应用"
 
   - id: jike-ai
     name: "即刻 AI 圈"
     role: early-radar
     url: https://web.okjike.com/
+    api_hint: "web.okjike.com 需登录；改用移动端话题页 https://m.okjike.com/topics/63579abb6724cc583b9bba9a （AI探索站），取 top 3"
     scan_focus: "中文 AI 构建者社区热议、国产独立开发者新作品"
+
+# [已移除 2026-10-10] product-hunt — 连续 3 周全链路 403 零产出，成本优化删除
+# [已移除 2026-10-10] huggingface-trending — 大厂模型已被 Simon/swyx 覆盖，边际价值低；需要时用 HF API 单发补查
 
 # Automation settings
 automation:
