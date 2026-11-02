@@ -1,5 +1,18 @@
 # Tech Blog Subscription Sources Configuration
 # Used by weekly digest automation
+#
+# ─── fallback 字段约定（2026-10-31 新增，成本优化 + 采集健壮性）───
+# 每个源可选 fallback 字段，是一个有序列表，抓取子 Agent 按顺序尝试，命中即停：
+#   primary   : 首选紧凑端点（RSS/atom/feed），最快最省 credit
+#   archive   : 主 feed 不可达时的网页降级入口（Substack/beehiiv 的 /archive 页
+#               内嵌 newPostsForArchive/initial JSON，可静态解析出标题+日期+slug+canonical_url，
+#               正文需再逐篇请求文章页）。已实测可达：evakeiffenheim / lg / latent.space
+#   search    : 无稳定主页的源（X 封号迁移、公众号无固定镜像）用 WebSearch 搜近期标题，
+#               命中虎嗅/网易/雪球等单篇镜像。标注为「事件驱动·二次来源」，非稳定端点。
+#   规则：primary 失败 → 试 archive → 仍失败 → 试 search → 全失败才标『不可达』。
+#   每源最多 2 次抓取尝试的护栏不变；fallback 只在 primary 失败时才消耗额外尝试。
+# ⚠️ 教训（W44）：/feed fetch failed 时不要直接判『不可达』——archive 常能救回，
+#    W44 Eva 实际有 10-28 新文却因 feed 失败被误标不可达。
 
 sources:
   english:
@@ -81,6 +94,11 @@ sources:
       frequency: biweekly
       priority: 3
       focus: "Agentic coding at scale, agent orchestration, loop engineering"
+      # 博客 biweekly 常无新文；此时看 GitHub addyosmani/agent-skills 最近 commit 作二次来源
+      # （W44 实测：10-29 有 23+ commits、发布 0.6.14 对齐 Agent Plugins 1.0.0，是命题二一手信号）。
+      fallback:
+        - "primary: https://addyosmani.com/blog/"
+        - "secondary: https://github.com/addyosmani/agent-skills/commits （博客无新文时看最近 commit，标二次来源）"
 
     - id: eugene-yan
       name: "Eugene Yan"
@@ -129,6 +147,13 @@ sources:
       frequency: weekly
       priority: 4
       focus: "AI engineering field mapping, emerging patterns, community"
+      # W44：主 feed 不可达，子 Agent 退到日报站转引（二手）。实测 /archive 可达且内嵌 initial.items JSON
+      # （含 slug/date/type/section/sourceUrl），本周有一手内容（10-29 Elorian、10-31 AINews 等）。
+      # 优先 archive 一手，别再默认走日报镜像二手；AINews 子栏目可用 archive 的 type=AI News 过滤。
+      fallback:
+        - "primary: https://www.latent.space/feed"
+        - "archive: https://www.latent.space/archive （实测可达，一手；解析 initial.items JSON，AINews 子栏目按 type 过滤）"
+        - "search: WebSearch 'Latent Space swyx <近期标题>' → 日报站/镜像转引（仅二手，最后兜底）"
 
     # ─── AI Product & Design ───
     - id: julie-zhuo
@@ -139,6 +164,11 @@ sources:
       frequency: biweekly
       priority: 4
       focus: "AI × design judgment, product craft, taste in AI era"
+      # W44：/feed 两次 fetch failed 被标不可达，实测 /archive 可达（最新 10-13，本周确无更新）。
+      # 注意：archive 的 body_json/body_html 为 null，只能拿到标题+日期+slug，正文需逐篇 /p/<slug>。
+      fallback:
+        - "primary: https://lg.substack.com/feed"
+        - "archive: https://lg.substack.com/archive （实测可达；仅元数据，正文需再请求文章页）"
 
     - id: sachin-rekhi
       name: "Sachin Rekhi"
@@ -162,6 +192,9 @@ sources:
       frequency: weekly
       priority: 1
       focus: "AI × metacognition, cognitive offloading, what AI does to thinking"
+      # 端点怪癖：主页 conspicuouscognition.com 常 fetch failed，直接用 /feed 即可（实测稳定）。
+      fallback:
+        - "primary: https://www.conspicuouscognition.com/feed （主页常 fetch failed，别抓主页）"
 
     # [已移除 2026-07-24] amanda-askell — 本人确认 5 年未写个人博客，写作已通过 Anthropic 职业渠道发布
 
@@ -173,6 +206,11 @@ sources:
       frequency: weekly
       priority: 3
       focus: "AI × creativity, cognitive impact, learning sciences"
+      # W44 教训：/feed 两次 fetch failed，但 /archive 可达且本周实有 10-28 新文
+      # （Why Critical Thinking Starts With…）被误标『不可达』。archive 内嵌 JSON 可静态解析。
+      fallback:
+        - "primary: https://evakeiffenheim.substack.com/feed"
+        - "archive: https://evakeiffenheim.substack.com/archive （实测可达，解析 newPostsForArchive JSON 取标题+日期+slug，正文再逐篇请求 /p/<slug>）"
 
     # ─── Indie AI Builders ───
     - id: marc-lou
@@ -187,6 +225,13 @@ sources:
       check: monthly
       last_post: "2026-09-07"
       last_checked: "2026-W41"
+      # 端点更新（2026-10-31 实测）：newsletter.marclou.com 仍 403，但主站 marclou.com 可达——
+      #    含最近三期 newsletter 标题+链接，文章托管在 marclou.com/p/<slug>，完整归档在 marclou.com/newsletter。
+      #    monthly 核查时改用主站，别死磕 403 的 newsletter 子域。
+      fallback:
+        - "primary: https://marclou.com （实测可达；首页列最近三期 newsletter，单篇在 /p/<slug>）"
+        - "archive: https://marclou.com/newsletter （完整 All issues 归档）"
+        - "note: newsletter.marclou.com 已弃用（403），勿再作端点"
 
     - id: thorsten-ball
       name: "Thorsten Ball"
@@ -197,6 +242,9 @@ sources:
       frequency: biweekly
       priority: 4
       focus: "Building coding agents, implementation depth, code + beauty"
+      # 端点怪癖：/rss 返回 404，改用 /archive（W44 实测可达，拿到末篇 Joy & Curiosity #103）。
+      fallback:
+        - "primary: https://registerspill.thorstenball.com/archive （/rss 会 404，别用）"
 
   chinese:
     - id: wei-shijie
@@ -216,15 +264,28 @@ sources:
       frequency: weekly
       priority: 6
       focus: "China-US AI comparison, compute economics, industry intel"
+      # ⚠️ 端点纠正（W44 教训）：子 Agent 用 sv101.fireside.fm/rss 报 301+两次 fetch failed 退到微博二手，
+      #    但 301 跳转后的 feeds.fireside.fm/sv101/rss 实测稳定可达、字段齐全（RSS2.0+PubSubHubbub+enclosure）。
+      #    W44 因此漏了窗口内一手 E257「对话 Vitalik」(10-28)。务必用 feeds.fireside.fm 正式域，别停在跳转前。
+      fallback:
+        - "primary: https://feeds.fireside.fm/sv101/rss （实测稳定，一手；sv101.fireside.fm/rss 会 301 跳到此域，直接用正式域避免跳转失败）"
+        - "search: WebSearch '硅谷101 陈茜 E2XX' → 陈茜本人微博/节目页（仅当 RSS transient 失败时兜底，别默认走二手）"
 
     - id: kazike
       name: "数字生命卡兹克"
       type: wechat+x
-      x: "@Rockhazix"
+      x: "@Khazix0918"            # 2026-10 更新：原 @Rockhazix 已封，迁至 @Khazix0918
       github: "KKKKhazix"
       frequency: weekly
       priority: 4
       focus: "AI workflow, side-projects, open-source skills, one-person company"
+      # ⚠️ 无稳定可抓取主页：X 抓取不稳、公众号无固定第三方镜像；旧的融pm 专栏
+      #    (rongpm.com/column/u/rockhazix) 实测 2026-10-31 已 403 失效，勿再作端点。
+      #    策略=事件驱动搜索：WebSearch 近期标题 → 命中虎嗅/网易/雪球单篇镜像（标注二手来源）。
+      #    连续不可达不代表停更（W44 实有 Anthropic 招股书稿，经虎嗅镜像取到）。
+      fallback:
+        - "search: WebSearch '数字生命卡兹克 <本周关键词/近期标题>' → 虎嗅 huxiu.com / 网易 163.com / 雪球 单篇镜像（二手来源，标注）"
+        - "note: X @Khazix0918 与公众号为源头，但抓取不稳；勿死磕单一镜像，2 次尝试不中即标『不可达/二次来源』"
 
     - id: guo-yu
       name: "郭宇 (guoyu.eth)"
@@ -234,6 +295,14 @@ sources:
       frequency: monthly
       priority: 6
       focus: "Tech aesthetics, knowledge work future, individual choices"
+      # ⚠️ 连续不可达观察（W42/W43/W44 三期）：X @turingou 抓取不稳、paragraph 镜像 fetch failed。
+      #    monthly 低频源本就常无新刊，不可达≠停更。但连续三期取不到内容，若下期仍失败，
+      #    建议 owner 评估：①降权或转 quarterly ②寻找 paragraph 之外的稳定镜像 ③或移除。
+      #    注：W41 郭宇 Grokbot 帖曾是命题三最尖锐一手素材，价值高于其"生活分享"常态，故暂留观察。
+      fallback:
+        - "primary: https://paragraph.com/0xd6db919fdddbed1ce19973156b49e51959408e9e （镜像，近期不稳）"
+        - "search: WebSearch '郭宇 turingou OR guoyu.eth <近期关键词>' → 注意排除同名人物（浙大教授/企业高管），只认加密/web3/科技审美语境的本人"
+        - "note: 连续不可达即标注，勿反复重试；monthly 源窗口内无新刊属正常"
 
     - id: zhang-xiaojun
       name: "张小珺｜商业访谈录"
