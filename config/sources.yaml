@@ -29,7 +29,7 @@ sources:
       status: dormant            # 长期停更，降为每月核查（2026-10-10 成本优化）
       check: monthly
       last_post: "2026-06-28"
-      last_checked: "2026-W41"
+      last_checked: "2026-W45"    # 2026-11 月度核查（W45，仍停更）；W46 沿用，不重复抓
 
     # [已移除 2026-07-24] eugene-wei — Substack 停更自 2021，末篇长文 2023-07，仅 X 短推文活跃
 
@@ -45,7 +45,7 @@ sources:
       status: dormant            # 静默 13+ 周，降为每月核查（2026-10-10 成本优化）
       check: monthly
       last_post: "2026-07-10"
-      last_checked: "2026-W41"
+      last_checked: "2026-W45"    # 2026-11 月度核查（W45，端点已 Next.js 动态化，仍停更）；W46 沿用
 
     - id: simon-willison
       name: "Simon Willison"
@@ -82,7 +82,7 @@ sources:
       status: dormant            # Substack 空壳、博客末篇 2/12，降为每月核查（2026-10-10 成本优化）
       check: monthly
       last_post: "2026-02-12"
-      last_checked: "2026-W41"
+      last_checked: "2026-W45"    # 2026-11 月度核查（W45，仍停更）；W46 沿用
 
     # ─── AI Engineering Practice ───
     - id: addy-osmani
@@ -112,7 +112,7 @@ sources:
       status: dormant            # 末篇 6/21、已加入 Anthropic，降为每月核查（2026-10-10 成本优化）
       check: monthly
       last_post: "2026-06-21"
-      last_checked: "2026-W41"
+      last_checked: "2026-W45"    # 2026-11 月度核查（W45，仍停更）；W46 沿用
 
     - id: jason-liu
       name: "Jason Liu"
@@ -126,7 +126,7 @@ sources:
       status: dormant            # 末篇 7/5、全年仅 8 篇，降为每月核查（2026-10-10 成本优化）
       check: monthly
       last_post: "2026-07-05"
-      last_checked: "2026-W41"
+      last_checked: "2026-W45"    # 2026-11 月度核查（W45，仍停更）；W46 沿用
 
     - id: hamel-husain
       name: "Hamel Husain"
@@ -180,8 +180,8 @@ sources:
       focus: "AI-era PM craft, prototyping, operational frameworks"
       status: dormant            # 末篇 8/23、48 天未更，降为每月核查（2026-10-10 成本优化）
       check: monthly
-      last_post: "2026-08-23"
-      last_checked: "2026-W41"
+      last_post: "2026-10-11"     # W45 月度核查发现单篇回归「The AI Transformation Playbook」(2026-10-11)
+      last_checked: "2026-W45"    # 2026-11 月度核查（W45，单篇回归，仍标 dormant 待观察）；W46 沿用
 
     # ─── AI + Cognitive Science ───
     - id: dan-williams
@@ -224,7 +224,7 @@ sources:
       status: dormant            # newsletter 全站 403、迁出 Beehiiv，降为每月核查（2026-10-10 成本优化）
       check: monthly
       last_post: "2026-09-07"
-      last_checked: "2026-W41"
+      last_checked: "2026-W45"    # 2026-11 月度核查（W45，marclou.com DNS 失败未成功，沿用旧值）；W46 沿用
       # 端点更新（2026-10-31 实测）：newsletter.marclou.com 仍 403，但主站 marclou.com 可达——
       #    含最近三期 newsletter 标题+链接，文章托管在 marclou.com/p/<slug>，完整归档在 marclou.com/newsletter。
       #    monthly 核查时改用主站，别死磕 403 的 newsletter 子域。
